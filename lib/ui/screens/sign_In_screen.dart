@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:taskly/data/services/network_caller.dart';
+import 'package:taskly/data/utils/urls.dart';
 import 'package:taskly/ui/screens/forgot_password_verify_email_screen.dart';
 import 'package:taskly/ui/screens/main_bottom_nav_screen.dart';
 import 'package:taskly/ui/screens/sign_up_screen.dart';
@@ -19,6 +21,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _emailTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _signInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +43,28 @@ class _SignInScreenState extends State<SignInScreen> {
                   controller: _emailTEController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(hintText: 'Email'),
+                  validator: (String? value) {
+                    if (value?.trim().isEmpty ?? true) {
+                      return 'Enter Your Email';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordTEController,
                   obscureText: true,
                   decoration: const InputDecoration(hintText: 'Password'),
+                  validator: (String? value) {
+                    if (value?.trim().isEmpty ?? true) {
+                      return 'Enter Password';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, MainBottomNavScreen.name);
-                    },
+                    onPressed: _onTapSignInButton,
                     child: const Icon(Icons.arrow_circle_right_outlined)),
                 const SizedBox(height: 50),
                 Center(
@@ -74,6 +87,18 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       )),
     );
+  }
+
+  void _onTapSignInButton(){
+    if (_formKey.currentState!.validate()){
+
+    }
+  }
+
+  Future<void> _signIn() async {
+    _signInProgress = true;
+    setState(() { });
+    final NetworkResponse response = await NetworkCaller.postRequest(url: Urls);
   }
 
   Widget _buildSignUpSelection() {
