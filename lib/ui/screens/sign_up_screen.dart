@@ -130,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _signUpInProgress = true;
     setState(() {});
 
-    Map<String, dynamic> requestParams = {
+    Map<String, dynamic> requestBody = {
       "email": _emailTEController.text.trim(),
       "firstName": _firstNameTEController.text.trim(),
       "lastName": _lastNameTEController.text.trim(),
@@ -140,7 +140,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     };
 
     final NetworkResponse response = await NetworkCaller.postRequest(
-        url: Urls.registrationUrl, body: requestParams);
+        url: Urls.registrationUrl, body: requestBody);
     _signUpInProgress = false;
     setState(() {});
     if (response.isSuccess) {
