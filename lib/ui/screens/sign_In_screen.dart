@@ -116,8 +116,13 @@ class _SignInScreenState extends State<SignInScreen> {
       Navigator.pushReplacementNamed(context, MainBottomNavScreen.name);
     } else {
       _signInProgress = false;
-      setState(() { });
+      setState(() {});
+      if (response.statusCode == 401) {
+        showSnackBarMessage(context, 'Email/Password is incorrect');
+
+      } else {
       showSnackBarMessage(context, response.errorMessage);
+    }
     }
   }
 
