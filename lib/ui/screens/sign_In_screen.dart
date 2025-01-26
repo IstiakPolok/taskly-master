@@ -6,7 +6,9 @@ import 'package:taskly/ui/screens/forgot_password_verify_email_screen.dart';
 import 'package:taskly/ui/screens/main_bottom_nav_screen.dart';
 import 'package:taskly/ui/screens/sign_up_screen.dart';
 import 'package:taskly/ui/utils/app_colors.dart';
+import 'package:taskly/ui/widgets/center_circular_prograss_indicator.dart';
 import 'package:taskly/ui/widgets/screen_background.dart';
+import 'package:taskly/ui/widgets/snack_bar_message.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -63,9 +65,13 @@ class _SignInScreenState extends State<SignInScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-                ElevatedButton(
-                    onPressed: _onTapSignInButton,
-                    child: const Icon(Icons.arrow_circle_right_outlined)),
+                Visibility(
+                  visible: _signInProgress == false,
+                  replacement: const CenterCircularPrograssIndicator(),
+                  child: ElevatedButton(
+                      onPressed: _onTapSignInButton,
+                      child: const Icon(Icons.arrow_circle_right_outlined)),
+                ),
                 const SizedBox(height: 50),
                 Center(
                   child: Column(
@@ -89,16 +95,30 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void _onTapSignInButton(){
-    if (_formKey.currentState!.validate()){
-
+  void _onTapSignInButton() {
+    if (_formKey.currentState!.validate()) {
+      _signIn();
     }
   }
 
   Future<void> _signIn() async {
     _signInProgress = true;
-    setState(() { });
-    final NetworkResponse response = await NetworkCaller.postRequest(url: Urls);
+    setState(() {});
+    Map<String, dynamic> requestBody  = {
+
+        "email": _emailTEController.text.trim(),
+        "password": _passwordTEController.text,
+
+    };
+    final NetworkResponse response =
+        await NetworkCaller.postRequest(url: Urls.loginUrl, body: requestBody);
+    if (response.isSuccess) {
+      Navigator.pushReplacementNamed(context, MainBottomNavScreen.name);
+    } else {
+      _signInProgress = false;
+      setState(() { });
+      showSnackBarMessage(context, response.errorMessage);
+    }
   }
 
   Widget _buildSignUpSelection() {
