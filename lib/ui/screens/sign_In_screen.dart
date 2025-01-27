@@ -1,7 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskly/data/models/user_model.dart';
 import 'package:taskly/data/services/network_caller.dart';
 import 'package:taskly/data/utils/urls.dart';
+import 'package:taskly/ui/controller/auth_controller.dart';
 import 'package:taskly/ui/screens/forgot_password_verify_email_screen.dart';
 import 'package:taskly/ui/screens/main_bottom_nav_screen.dart';
 import 'package:taskly/ui/screens/sign_up_screen.dart';
@@ -113,6 +116,9 @@ class _SignInScreenState extends State<SignInScreen> {
     final NetworkResponse response =
         await NetworkCaller.postRequest(url: Urls.loginUrl, body: requestBody);
     if (response.isSuccess) {
+      String token = response.responseData!['token'];
+      UserModel userModel = UserModel.fromJson(response.responseData!['data']);
+      await AuthController.saveUserData(token, userModel);
       Navigator.pushReplacementNamed(context, MainBottomNavScreen.name);
     } else {
       _signInProgress = false;
